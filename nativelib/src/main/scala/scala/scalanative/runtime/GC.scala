@@ -3,7 +3,16 @@ package runtime
 
 import native._
 
-@extern object GC {
-  def GC_malloc(size: CSize): Ptr[_] = extern
-  def GC_init(): Unit = extern
+/**
+ * The Boehm GC conservative garbage collector
+ *
+ * @see [[http://hboehm.info/gc/gcinterface.html C Interface]]
+ */
+@link("gc")
+@extern
+object GC {
+  @name("GC_malloc")
+  def malloc(size: CSize): Ptr[Byte] = extern
+  @name("GC_malloc_atomic")
+  def malloc_atomic(size: CSize): Ptr[Byte] = extern
 }

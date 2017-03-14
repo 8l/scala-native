@@ -2,8 +2,8 @@ package java.io
 
 import java.util.Formatter
 
-class PrintWriter(protected[io] var out: Writer,
-    autoFlush: Boolean) extends Writer {
+class PrintWriter(protected[io] var out: Writer, autoFlush: Boolean)
+    extends Writer {
 
   def this(out: Writer) = this(out, false)
 
@@ -20,12 +20,14 @@ class PrintWriter(protected[io] var out: Writer,
   def this(file: File) =
     this(new BufferedOutputStream(new FileOutputStream(file)))
   def this(file: File, csn: String) =
-    this(new OutputStreamWriter(new BufferedOutputStream(
-        new FileOutputStream(file)), csn))
+    this(
+      new OutputStreamWriter(
+        new BufferedOutputStream(new FileOutputStream(file)),
+        csn))
   def this(fileName: String) = this(new File(fileName))
   def this(fileName: String, csn: String) = this(new File(fileName), csn)
 
-  private var closed: Boolean = false
+  private var closed: Boolean    = false
   private var errorFlag: Boolean = false
 
   def flush(): Unit =
@@ -60,7 +62,7 @@ class PrintWriter(protected[io] var out: Writer,
     }
   }
 
-  protected[io] def setError(): Unit = errorFlag = true
+  protected[io] def setError(): Unit   = errorFlag = true
   protected[io] def clearError(): Unit = errorFlag = false
 
   override def write(c: Int): Unit =
@@ -143,7 +145,8 @@ class PrintWriter(protected[io] var out: Writer,
     }
   }
 
-  @inline private[this] def ensureOpenAndTrapIOExceptions(body: => Unit): Unit = {
+  @inline private[this] def ensureOpenAndTrapIOExceptions(
+      body: => Unit): Unit = {
     if (closed) setError()
     else trapIOExceptions(body)
   }

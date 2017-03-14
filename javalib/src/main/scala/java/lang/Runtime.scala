@@ -1,8 +1,11 @@
 package java.lang
 
-class Runtime private() {
+import scala.scalanative.native.stdlib
+
+class Runtime private () {
   def availableProcessors(): Int = 1
-  def gc(): Unit = ()
+  def exit(status: Int): Unit    = stdlib.exit(status)
+  def gc(): Unit                 = ()
 }
 
 object Runtime {

@@ -1,120 +1,144 @@
 package scala.scalanative
 package linker
 
-import java.io.{File, PrintWriter}
 import scala.collection.mutable
 import nir._
 import nir.serialization._
-import nir.Shows._
-import util.sh
+import util.Scope
 
-final class Linker(dotpath: Option[String], paths: Seq[String]) {
-  private val assemblies: Seq[Assembly] =
-    paths.flatMap(Assembly(_))
+import ReflectiveProxy._
 
-  private def load(global: Global): Option[(Seq[Dep], Defn)] =
-    assemblies.collectFirst {
-      case assembly if assembly.contains(global) =>
-        assembly.load(global)
-    }.flatten
+sealed trait Linker {
 
-  private val writer =
-    dotpath.map(path => new PrintWriter(new File(path)))
+  /** Link the whole world under closed world assumption. */
+  def link(entries: Seq[Global])
+    : (Seq[Global], Seq[Attr.Link], Seq[Defn], Seq[String])
+}
 
-  private def writeStart(): Unit =
-    writer.foreach { writer =>
-      writer.println("digraph G {")
-    }
+object Linker {
 
-  private def writeEdge(from: Global, to: Global): Unit =
-    writer.foreach { writer =>
-      def quoted(s: String) = "\"" + s + "\""
-      writer.print(quoted(sh"$from".toString))
-      writer.print("->")
-      writer.print(quoted(sh"$to".toString))
-      writer.println(";")
-    }
+  /** Create a new linker given tools configuration. */
+  def apply(config: tools.Config,
+            reporter: Reporter = Reporter.empty): Linker =
+    new Impl(config, reporter)
 
-  private def writeEnd(): Unit =
-    writer.foreach { writer =>
-      writer.println("}")
-      writer.close()
-    }
+  private final class Impl(config: tools.Config, reporter: Reporter)
+      extends Linker {
+    import reporter._
 
-  def link(entry: Global): (Seq[Global], Seq[Defn]) = {
-    val resolved   = mutable.Set.empty[Global]
-    val unresolved = mutable.Set.empty[Global]
-    val defns      = mutable.UnrolledBuffer.empty[Defn]
-    val direct     = mutable.Stack.empty[Global]
-    var conditional = mutable.UnrolledBuffer.empty[Dep.Conditional]
+    private def load(global: Global)
+      : Option[(Seq[Dep], Seq[Attr.Link], Seq[String], Defn)] =
+      config.paths.collectFirst {
+        case path if path.contains(global) =>
+          path.load(global)
+      }.flatten
 
-    def processDirect =
-      while (direct.nonEmpty) {
-        val workitem = direct.pop()
+    def link(entries: Seq[Global])
+      : (Seq[Global], Seq[Attr.Link], Seq[Defn], Seq[String]) = {
+      val resolved    = mutable.Set.empty[Global]
+      val unresolved  = mutable.Set.empty[Global]
+      val links       = mutable.Set.empty[Attr.Link]
+      val defns       = mutable.UnrolledBuffer.empty[Defn]
+      val direct      = mutable.Stack.empty[Global]
+      var conditional = mutable.UnrolledBuffer.empty[Dep.Conditional]
+      val weaks       = mutable.Set.empty[Global]
+      val signatures  = mutable.Set.empty[String]
+      val dyndefns    = mutable.Set.empty[Global]
 
-        if (!workitem.isIntrinsic && !resolved.contains(workitem) &&
-            !unresolved.contains(workitem)) {
+      def processDirect =
+        while (direct.nonEmpty) {
+          val workitem = direct.pop()
+          if (!workitem.isIntrinsic && !resolved.contains(workitem) &&
+              !unresolved.contains(workitem)) {
 
-          load(workitem).fold[Unit] {
-            unresolved += workitem
-          } {
-            case (deps, defn) =>
-              resolved += workitem
-              defns += defn
+            load(workitem).fold[Unit] {
+              unresolved += workitem
+              onUnresolved(workitem)
+            } {
+              case (deps, newlinks, newsignatures, defn) =>
+                resolved += workitem
+                defns += defn
+                links ++= newlinks
+                signatures ++= newsignatures
 
-              deps.foreach {
-                case Dep.Direct(dep) =>
-                  writeEdge(workitem, dep)
-                  direct.push(dep)
+                // Comparing new signatures with already collected weak dependencies
+                newsignatures
+                  .flatMap(signature =>
+                    weaks.collect {
+                      case weak if Global.genSignature(weak) == signature =>
+                        weak
+                  })
+                  .foreach { global =>
+                    direct.push(global)
+                    dyndefns += global
+                  }
 
-                case cond: Dep.Conditional =>
-                  conditional += cond
-              }
+                onResolved(workitem)
+
+                deps.foreach {
+                  case Dep.Direct(dep) =>
+                    direct.push(dep)
+                    onDirectDependency(workitem, dep)
+
+                  case cond @ Dep.Conditional(dep, condition) =>
+                    conditional += cond
+                    onConditionalDependency(workitem, dep, condition)
+
+                  case Dep.Weak(global) =>
+                    // comparing new dependencies with all signatures
+                    if (signatures(Global.genSignature(global))) {
+                      direct.push(global)
+                      onDirectDependency(workitem, global)
+                      dyndefns += global
+                    }
+                    weaks += global
+                }
+
+            }
           }
         }
+
+      def processConditional = {
+        val rest = mutable.UnrolledBuffer.empty[Dep.Conditional]
+
+        conditional.foreach {
+          case Dep.Conditional(dep, cond)
+              if resolved.contains(dep) || unresolved.contains(dep) =>
+            ()
+
+          case Dep.Conditional(dep, cond) if resolved.contains(cond) =>
+            direct.push(dep)
+
+          case dep =>
+            rest += dep
+        }
+
+        conditional = rest
       }
 
-    def processConditional = {
-      val rest = mutable.UnrolledBuffer.empty[Dep.Conditional]
+      onStart()
 
-      conditional.foreach {
-        case Dep.Conditional(dep, cond)
-            if resolved.contains(dep) || unresolved.contains(dep) =>
-          ()
-
-        case Dep.Conditional(dep, cond) if resolved.contains(cond) =>
-          writeEdge(cond, dep)
-          direct.push(dep)
-
-        case dep =>
-          rest += dep
+      entries.foreach { entry =>
+        direct.push(entry)
+        onEntry(entry)
       }
 
-      conditional = rest
+      while (direct.nonEmpty) {
+        processDirect
+        processConditional
+      }
+
+      val reflectiveProxies =
+        genAllReflectiveProxies(dyndefns, defns)
+
+      val defnss = defns ++ reflectiveProxies
+
+      onComplete()
+
+      (unresolved.toSeq,
+       links.toSeq,
+       defnss.sortBy(_.name.toString),
+       signatures.toSeq)
     }
-
-    writeStart()
-    writeEdge(Global.Val("main"), entry)
-    direct.push(entry)
-    Rt.pinned.foreach(direct.push)
-    while (direct.nonEmpty) {
-      processDirect
-      processConditional
-    }
-    writeEnd()
-
-    (unresolved.toSeq, defns.sortBy(_.name.toString).toSeq)
-  }
-
-  def linkClosed(entry: Global): Seq[Defn] = {
-    val (unresolved, defns) = link(entry)
-
-    if (unresolved.nonEmpty) {
-      println(s"Unresolved dependencies:")
-      unresolved.map(u => sh"  `$u`".toString).sorted.foreach(println(_))
-      throw new LinkingError("Failed to resolve all dependencies.")
-    }
-
-    defns
   }
 }

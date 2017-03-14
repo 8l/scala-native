@@ -1,37 +1,55 @@
 package java.lang
 
 import scala.scalanative.native._
-import scala.scalanative.runtime.{Monitor, Type}
+import scala.scalanative.runtime
+import scala.scalanative.runtime._
+import scalanative.runtime.Intrinsics._
 
 class _Object {
-  def _equals(that: _Object): scala.Boolean =
-    this.cast[Word] == that.cast[Word]
+  @inline def __equals(that: _Object): scala.Boolean =
+    this eq that
 
-  def _hashCode(): scala.Int =
+  @inline def __hashCode(): scala.Int =
     this.cast[Word].hashCode
 
-  def _toString(): String =
+  @inline def __toString(): String =
     getClass.getName + "@" + Integer.toHexString(hashCode)
 
-  def _getClass(): _Class[_] =
-    new _Class(Type.get(this))
+  @inline def __getClass(): _Class[_] =
+    new _Class(runtime.getType(this))
 
-  def _notify(): Unit =
-    Monitor.get(this)._notify
+  @inline def __notify(): Unit =
+    runtime.getMonitor(this)._notify
 
-  def _notifyAll(): Unit =
-    Monitor.get(this)._notifyAll
+  @inline def __notifyAll(): Unit =
+    runtime.getMonitor(this)._notifyAll
 
-  def _wait(): Unit =
-    Monitor.get(this)._wait
+  @inline def __wait(): Unit =
+    runtime.getMonitor(this)._wait
 
-  def _wait(timeout: scala.Long): Unit =
-    Monitor.get(this)._wait(timeout)
+  @inline def __wait(timeout: scala.Long): Unit =
+    runtime.getMonitor(this)._wait(timeout)
 
-  def _wait(timeout: scala.Long, nanos: Int): Unit =
-    Monitor.get(this)._wait(timeout, nanos)
+  @inline def __wait(timeout: scala.Long, nanos: Int): Unit =
+    runtime.getMonitor(this)._wait(timeout, nanos)
 
-  protected def _clone(): _Object = ???
+  @inline def __scala_==(other: _Object): scala.Boolean =
+    __equals(other)
 
-  protected def _finalize(): Unit = ()
+  @inline def __scala_## : scala.Int =
+    __hashCode
+
+  protected def __clone(): _Object = {
+    val typePtr: Ptr[Type] = getType(this)
+    val size               = (!typePtr).size
+    val clone              = GC.malloc(size)
+    `llvm.memcpy.p0i8.p0i8.i64`(clone.cast[Ptr[scala.Byte]],
+                                this.cast[Ptr[scala.Byte]],
+                                size,
+                                1,
+                                false)
+    clone.cast[_Object]
+  }
+
+  protected def __finalize(): Unit = ()
 }

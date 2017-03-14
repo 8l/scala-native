@@ -19,11 +19,13 @@ class Formatter {
 
   def close(): Unit = ???
   def flush(): Unit = ???
-  def format(locale: Locale, format: String, args: Any*): Formatter = ???
-  def format(format: String, args: Any*): Formatter = ???
-  def ioException(): IOException = ???
-  def locale(): Locale = ???
-  def out(): Appendable = ???
+  def format(locale: Locale, format: String, args: Array[Object]): Formatter =
+    ???
+  def format(format: String, args: Array[Object]): Formatter = ???
+  def ioException(): IOException                             = ???
+  def locale(): Locale                                       = ???
+  def out(): Appendable                                      = ???
+  override def toString: String                              = ???
 }
 
 object Formatter

@@ -2,215 +2,364 @@ package java.lang
 
 import java.util.Arrays
 
-@inline
-class Character(private val value: scala.Char) extends Comparable[Character] {
+class Character(val _value: scala.Char)
+    extends _Object
+    with java.io.Serializable
+    with Comparable[Character] {
+  def charValue(): scala.Char =
+    _value
 
-  def charValue(): scala.Char = value
+  @inline override def equals(that: Any): scala.Boolean =
+    that match {
+      case that: Character =>
+        _value == that._value
+      case _ =>
+        false
+    }
 
-  override def equals(that: Any): scala.Boolean =
-    that.isInstanceOf[Character] && (value == that.asInstanceOf[Character].charValue)
+  @inline override def compareTo(that: Character): Int =
+    Character.compare(_value, that._value)
 
-  override def compareTo(that: Character): Int =
-    Character.compare(charValue, that.charValue)
+  @inline override def toString(): String =
+    Character.toString(_value)
 
-  override def toString(): String =
-    Character.toString(value)
+  @inline override def hashCode(): Int =
+    Character.hashCode(_value)
 
-  override def hashCode(): Int = value.##
+  @inline override def __scala_==(other: _Object): scala.Boolean =
+    other match {
+      case other: java.lang.Character => _value == other._value
+      case other: java.lang.Byte      => _value == other._value
+      case other: java.lang.Short     => _value == other._value
+      case other: java.lang.Integer   => _value == other._value
+      case other: java.lang.Long      => _value == other._value
+      case other: java.lang.Float     => _value == other._value
+      case other: java.lang.Double    => _value == other._value
+      case other: java.lang.Number    => other.__scala_==(this)
+      case _                          => super.__scala_==(other)
+    }
 
   /*
+   * Ported from ScalaJS
+   *
    * Methods on scala.Char
    * The following methods are only here to properly support reflective calls
    * on boxed primitive values. YOU WILL NOT BE ABLE TO USE THESE METHODS, since
    * we use the true javalib to lookup symbols, this file contains only
    * implementations.
    */
-  protected def toByte: scala.Byte     = value.toByte
-  protected def toShort: scala.Short   = value.toShort
-  protected def toChar: scala.Char     = value.toChar
-  protected def toInt: scala.Int       = value
-  protected def toLong: scala.Long     = value.toLong
-  protected def toFloat: scala.Float   = value.toFloat
-  protected def toDouble: scala.Double = value.toDouble
+  protected def toByte: scala.Byte     = _value.toByte
+  protected def toShort: scala.Short   = _value.toShort
+  protected def toChar: scala.Char     = _value.toChar
+  protected def toInt: scala.Int       = _value
+  protected def toLong: scala.Long     = _value.toLong
+  protected def toFloat: scala.Float   = _value.toFloat
+  protected def toDouble: scala.Double = _value.toDouble
 
   // scalastyle:off disallow.space.before.token
-  protected def unary_~ : scala.Int = ~value
-  protected def unary_+ : scala.Int = value
-  protected def unary_- : scala.Int = -value
+  protected def unary_~ : scala.Int = ~ _value.toInt
+  protected def unary_+ : scala.Int = _value.toInt
+  protected def unary_- : scala.Int = - _value.toInt
   // scalastyle:on disallow.space.before.token
 
-  protected def +(x: String): String = value + x
+  protected def +(x: String): String = _value + x
 
-  protected def <<(x: scala.Int): scala.Int = value << x
-  protected def <<(x: scala.Long): scala.Int = value << x
-  protected def >>>(x: scala.Int): scala.Int = value >>> x
-  protected def >>>(x: scala.Long): scala.Int = value >>> x
-  protected def >>(x: scala.Int): scala.Int = value >> x
-  protected def >>(x: scala.Long): scala.Int = value >> x
+  protected def <<(x: scala.Int): scala.Int   = _value << x
+  protected def <<(x: scala.Long): scala.Int  = _value << x
+  protected def >>>(x: scala.Int): scala.Int  = _value >>> x
+  protected def >>>(x: scala.Long): scala.Int = _value >>> x
+  protected def >>(x: scala.Int): scala.Int   = _value >> x
+  protected def >>(x: scala.Long): scala.Int  = _value >> x
 
-  protected def ==(x: scala.Byte): scala.Boolean = value == x
-  protected def ==(x: scala.Short): scala.Boolean = value == x
-  protected def ==(x: scala.Char): scala.Boolean = value == x
-  protected def ==(x: scala.Int): scala.Boolean = value == x
-  protected def ==(x: scala.Long): scala.Boolean = value == x
-  protected def ==(x: scala.Float): scala.Boolean = value == x
-  protected def ==(x: scala.Double): scala.Boolean = value == x
+  protected def ==(x: scala.Byte): scala.Boolean   = _value == x
+  protected def ==(x: scala.Short): scala.Boolean  = _value == x
+  protected def ==(x: scala.Char): scala.Boolean   = _value == x
+  protected def ==(x: scala.Int): scala.Boolean    = _value == x
+  protected def ==(x: scala.Long): scala.Boolean   = _value == x
+  protected def ==(x: scala.Float): scala.Boolean  = _value == x
+  protected def ==(x: scala.Double): scala.Boolean = _value == x
 
-  protected def !=(x: scala.Byte): scala.Boolean = value != x
-  protected def !=(x: scala.Short): scala.Boolean = value != x
-  protected def !=(x: scala.Char): scala.Boolean = value != x
-  protected def !=(x: scala.Int): scala.Boolean = value != x
-  protected def !=(x: scala.Long): scala.Boolean = value != x
-  protected def !=(x: scala.Float): scala.Boolean = value != x
-  protected def !=(x: scala.Double): scala.Boolean = value != x
+  protected def !=(x: scala.Byte): scala.Boolean   = _value != x
+  protected def !=(x: scala.Short): scala.Boolean  = _value != x
+  protected def !=(x: scala.Char): scala.Boolean   = _value != x
+  protected def !=(x: scala.Int): scala.Boolean    = _value != x
+  protected def !=(x: scala.Long): scala.Boolean   = _value != x
+  protected def !=(x: scala.Float): scala.Boolean  = _value != x
+  protected def !=(x: scala.Double): scala.Boolean = _value != x
 
-  protected def <(x: scala.Byte): scala.Boolean = value < x
-  protected def <(x: scala.Short): scala.Boolean = value < x
-  protected def <(x: scala.Char): scala.Boolean = value < x
-  protected def <(x: scala.Int): scala.Boolean = value < x
-  protected def <(x: scala.Long): scala.Boolean = value < x
-  protected def <(x: scala.Float): scala.Boolean = value < x
-  protected def <(x: scala.Double): scala.Boolean = value < x
+  protected def <(x: scala.Byte): scala.Boolean   = _value < x
+  protected def <(x: scala.Short): scala.Boolean  = _value < x
+  protected def <(x: scala.Char): scala.Boolean   = _value < x
+  protected def <(x: scala.Int): scala.Boolean    = _value < x
+  protected def <(x: scala.Long): scala.Boolean   = _value < x
+  protected def <(x: scala.Float): scala.Boolean  = _value < x
+  protected def <(x: scala.Double): scala.Boolean = _value < x
 
-  protected def <=(x: scala.Byte): scala.Boolean = value <= x
-  protected def <=(x: scala.Short): scala.Boolean = value <= x
-  protected def <=(x: scala.Char): scala.Boolean = value <= x
-  protected def <=(x: scala.Int): scala.Boolean = value <= x
-  protected def <=(x: scala.Long): scala.Boolean = value <= x
-  protected def <=(x: scala.Float): scala.Boolean = value <= x
-  protected def <=(x: scala.Double): scala.Boolean = value <= x
+  protected def <=(x: scala.Byte): scala.Boolean   = _value <= x
+  protected def <=(x: scala.Short): scala.Boolean  = _value <= x
+  protected def <=(x: scala.Char): scala.Boolean   = _value <= x
+  protected def <=(x: scala.Int): scala.Boolean    = _value <= x
+  protected def <=(x: scala.Long): scala.Boolean   = _value <= x
+  protected def <=(x: scala.Float): scala.Boolean  = _value <= x
+  protected def <=(x: scala.Double): scala.Boolean = _value <= x
 
-  protected def >(x: scala.Byte): scala.Boolean = value > x
-  protected def >(x: scala.Short): scala.Boolean = value > x
-  protected def >(x: scala.Char): scala.Boolean = value > x
-  protected def >(x: scala.Int): scala.Boolean = value > x
-  protected def >(x: scala.Long): scala.Boolean = value > x
-  protected def >(x: scala.Float): scala.Boolean = value > x
-  protected def >(x: scala.Double): scala.Boolean = value > x
+  protected def >(x: scala.Byte): scala.Boolean   = _value > x
+  protected def >(x: scala.Short): scala.Boolean  = _value > x
+  protected def >(x: scala.Char): scala.Boolean   = _value > x
+  protected def >(x: scala.Int): scala.Boolean    = _value > x
+  protected def >(x: scala.Long): scala.Boolean   = _value > x
+  protected def >(x: scala.Float): scala.Boolean  = _value > x
+  protected def >(x: scala.Double): scala.Boolean = _value > x
 
-  protected def >=(x: scala.Byte): scala.Boolean = value >= x
-  protected def >=(x: scala.Short): scala.Boolean = value >= x
-  protected def >=(x: scala.Char): scala.Boolean = value >= x
-  protected def >=(x: scala.Int): scala.Boolean = value >= x
-  protected def >=(x: scala.Long): scala.Boolean = value >= x
-  protected def >=(x: scala.Float): scala.Boolean = value >= x
-  protected def >=(x: scala.Double): scala.Boolean = value >= x
+  protected def >=(x: scala.Byte): scala.Boolean   = _value >= x
+  protected def >=(x: scala.Short): scala.Boolean  = _value >= x
+  protected def >=(x: scala.Char): scala.Boolean   = _value >= x
+  protected def >=(x: scala.Int): scala.Boolean    = _value >= x
+  protected def >=(x: scala.Long): scala.Boolean   = _value >= x
+  protected def >=(x: scala.Float): scala.Boolean  = _value >= x
+  protected def >=(x: scala.Double): scala.Boolean = _value >= x
 
-  protected def |(x: scala.Byte): scala.Int = value | x
-  protected def |(x: scala.Short): scala.Int = value | x
-  protected def |(x: scala.Char): scala.Int = value | x
-  protected def |(x: scala.Int): scala.Int = value | x
-  protected def |(x: scala.Long): scala.Long = value | x
+  protected def |(x: scala.Byte): scala.Int  = _value | x
+  protected def |(x: scala.Short): scala.Int = _value | x
+  protected def |(x: scala.Char): scala.Int  = _value | x
+  protected def |(x: scala.Int): scala.Int   = _value | x
+  protected def |(x: scala.Long): scala.Long = _value | x
 
-  protected def &(x: scala.Byte): scala.Int = value & x
-  protected def &(x: scala.Short): scala.Int = value & x
-  protected def &(x: scala.Char): scala.Int = value & x
-  protected def &(x: scala.Int): scala.Int = value & x
-  protected def &(x: scala.Long): scala.Long = value & x
+  protected def &(x: scala.Byte): scala.Int  = _value & x
+  protected def &(x: scala.Short): scala.Int = _value & x
+  protected def &(x: scala.Char): scala.Int  = _value & x
+  protected def &(x: scala.Int): scala.Int   = _value & x
+  protected def &(x: scala.Long): scala.Long = _value & x
 
-  protected def ^(x: scala.Byte): scala.Int = value ^ x
-  protected def ^(x: scala.Short): scala.Int = value ^ x
-  protected def ^(x: scala.Char): scala.Int = value ^ x
-  protected def ^(x: scala.Int): scala.Int = value ^ x
-  protected def ^(x: scala.Long): scala.Long = value ^ x
+  protected def ^(x: scala.Byte): scala.Int  = _value ^ x
+  protected def ^(x: scala.Short): scala.Int = _value ^ x
+  protected def ^(x: scala.Char): scala.Int  = _value ^ x
+  protected def ^(x: scala.Int): scala.Int   = _value ^ x
+  protected def ^(x: scala.Long): scala.Long = _value ^ x
 
-  protected def +(x: scala.Byte): scala.Int = value + x
-  protected def +(x: scala.Short): scala.Int = value + x
-  protected def +(x: scala.Char): scala.Int = value + x
-  protected def +(x: scala.Int): scala.Int = value + x
-  protected def +(x: scala.Long): scala.Long = value + x
-  protected def +(x: scala.Float): scala.Float = value + x
-  protected def +(x: scala.Double): scala.Double = value + x
+  protected def +(x: scala.Byte): scala.Int      = _value + x
+  protected def +(x: scala.Short): scala.Int     = _value + x
+  protected def +(x: scala.Char): scala.Int      = _value + x
+  protected def +(x: scala.Int): scala.Int       = _value + x
+  protected def +(x: scala.Long): scala.Long     = _value + x
+  protected def +(x: scala.Float): scala.Float   = _value + x
+  protected def +(x: scala.Double): scala.Double = _value + x
 
-  protected def -(x: scala.Byte): scala.Int = value - x
-  protected def -(x: scala.Short): scala.Int = value - x
-  protected def -(x: scala.Char): scala.Int = value - x
-  protected def -(x: scala.Int): scala.Int = value - x
-  protected def -(x: scala.Long): scala.Long = value - x
-  protected def -(x: scala.Float): scala.Float = value - x
-  protected def -(x: scala.Double): scala.Double = value - x
+  protected def -(x: scala.Byte): scala.Int      = _value - x
+  protected def -(x: scala.Short): scala.Int     = _value - x
+  protected def -(x: scala.Char): scala.Int      = _value - x
+  protected def -(x: scala.Int): scala.Int       = _value - x
+  protected def -(x: scala.Long): scala.Long     = _value - x
+  protected def -(x: scala.Float): scala.Float   = _value - x
+  protected def -(x: scala.Double): scala.Double = _value - x
 
-  protected def *(x: scala.Byte): scala.Int = value * x
-  protected def *(x: scala.Short): scala.Int = value * x
-  protected def *(x: scala.Char): scala.Int = value * x
-  protected def *(x: scala.Int): scala.Int = value * x
-  protected def *(x: scala.Long): scala.Long = value * x
-  protected def *(x: scala.Float): scala.Float = value * x
-  protected def *(x: scala.Double): scala.Double = value * x
+  protected def *(x: scala.Byte): scala.Int      = _value * x
+  protected def *(x: scala.Short): scala.Int     = _value * x
+  protected def *(x: scala.Char): scala.Int      = _value * x
+  protected def *(x: scala.Int): scala.Int       = _value * x
+  protected def *(x: scala.Long): scala.Long     = _value * x
+  protected def *(x: scala.Float): scala.Float   = _value * x
+  protected def *(x: scala.Double): scala.Double = _value * x
 
-  protected def /(x: scala.Byte): scala.Int = value / x
-  protected def /(x: scala.Short): scala.Int = value / x
-  protected def /(x: scala.Char): scala.Int = value / x
-  protected def /(x: scala.Int): scala.Int = value / x
-  protected def /(x: scala.Long): scala.Long = value / x
-  protected def /(x: scala.Float): scala.Float = value / x
-  protected def /(x: scala.Double): scala.Double = value / x
+  protected def /(x: scala.Byte): scala.Int      = _value / x
+  protected def /(x: scala.Short): scala.Int     = _value / x
+  protected def /(x: scala.Char): scala.Int      = _value / x
+  protected def /(x: scala.Int): scala.Int       = _value / x
+  protected def /(x: scala.Long): scala.Long     = _value / x
+  protected def /(x: scala.Float): scala.Float   = _value / x
+  protected def /(x: scala.Double): scala.Double = _value / x
 
-  protected def %(x: scala.Byte): scala.Int = value % x
-  protected def %(x: scala.Short): scala.Int = value % x
-  protected def %(x: scala.Char): scala.Int = value % x
-  protected def %(x: scala.Int): scala.Int = value % x
-  protected def %(x: scala.Long): scala.Long = value % x
-  protected def %(x: scala.Float): scala.Float = value % x
-  protected def %(x: scala.Double): scala.Double = value % x
-
+  protected def %(x: scala.Byte): scala.Int      = _value % x
+  protected def %(x: scala.Short): scala.Int     = _value % x
+  protected def %(x: scala.Char): scala.Int      = _value % x
+  protected def %(x: scala.Int): scala.Int       = _value % x
+  protected def %(x: scala.Long): scala.Long     = _value % x
+  protected def %(x: scala.Float): scala.Float   = _value % x
+  protected def %(x: scala.Double): scala.Double = _value % x
 }
 
 object Character {
-  final val TYPE = classOf[scala.Char]
+  final val TYPE      = classOf[scala.Char]
   final val MIN_VALUE = '\u0000'
   final val MAX_VALUE = '\uffff'
-  final val SIZE = 16
-
-  def valueOf(charValue: scala.Char): Character = new Character(charValue)
+  final val SIZE      = 16
+  final val BYTES     = 2
 
   /* These are supposed to be final vals of type Byte, but that's not possible.
    * So we implement them as def's, which are binary compatible with final vals.
    */
-  def UNASSIGNED: scala.Byte = 0
-  def UPPERCASE_LETTER: scala.Byte = 1
-  def LOWERCASE_LETTER: scala.Byte = 2
-  def TITLECASE_LETTER: scala.Byte = 3
-  def MODIFIER_LETTER: scala.Byte = 4
-  def OTHER_LETTER: scala.Byte = 5
-  def NON_SPACING_MARK: scala.Byte = 6
-  def ENCLOSING_MARK: scala.Byte = 7
-  def COMBINING_SPACING_MARK: scala.Byte = 8
-  def DECIMAL_DIGIT_NUMBER: scala.Byte = 9
-  def LETTER_NUMBER: scala.Byte = 10
-  def OTHER_NUMBER: scala.Byte = 11
-  def SPACE_SEPARATOR: scala.Byte = 12
-  def LINE_SEPARATOR: scala.Byte = 13
-  def PARAGRAPH_SEPARATOR: scala.Byte = 14
-  def CONTROL: scala.Byte = 15
-  def FORMAT: scala.Byte = 16
-  def PRIVATE_USE: scala.Byte = 18
-  def SURROGATE: scala.Byte = 19
-  def DASH_PUNCTUATION: scala.Byte = 20
-  def START_PUNCTUATION: scala.Byte = 21
-  def END_PUNCTUATION: scala.Byte = 22
-  def CONNECTOR_PUNCTUATION: scala.Byte = 23
-  def OTHER_PUNCTUATION: scala.Byte = 24
-  def MATH_SYMBOL: scala.Byte = 25
-  def CURRENCY_SYMBOL: scala.Byte = 26
-  def MODIFIER_SYMBOL: scala.Byte = 27
-  def OTHER_SYMBOL: scala.Byte = 28
-  def INITIAL_QUOTE_PUNCTUATION: scala.Byte = 29
-  def FINAL_QUOTE_PUNCTUATION: scala.Byte = 30
+  @inline def UNASSIGNED: scala.Byte                = 0
+  @inline def UPPERCASE_LETTER: scala.Byte          = 1
+  @inline def LOWERCASE_LETTER: scala.Byte          = 2
+  @inline def TITLECASE_LETTER: scala.Byte          = 3
+  @inline def MODIFIER_LETTER: scala.Byte           = 4
+  @inline def OTHER_LETTER: scala.Byte              = 5
+  @inline def NON_SPACING_MARK: scala.Byte          = 6
+  @inline def ENCLOSING_MARK: scala.Byte            = 7
+  @inline def COMBINING_SPACING_MARK: scala.Byte    = 8
+  @inline def DECIMAL_DIGIT_NUMBER: scala.Byte      = 9
+  @inline def LETTER_NUMBER: scala.Byte             = 10
+  @inline def OTHER_NUMBER: scala.Byte              = 11
+  @inline def SPACE_SEPARATOR: scala.Byte           = 12
+  @inline def LINE_SEPARATOR: scala.Byte            = 13
+  @inline def PARAGRAPH_SEPARATOR: scala.Byte       = 14
+  @inline def CONTROL: scala.Byte                   = 15
+  @inline def FORMAT: scala.Byte                    = 16
+  @inline def PRIVATE_USE: scala.Byte               = 18
+  @inline def SURROGATE: scala.Byte                 = 19
+  @inline def DASH_PUNCTUATION: scala.Byte          = 20
+  @inline def START_PUNCTUATION: scala.Byte         = 21
+  @inline def END_PUNCTUATION: scala.Byte           = 22
+  @inline def CONNECTOR_PUNCTUATION: scala.Byte     = 23
+  @inline def OTHER_PUNCTUATION: scala.Byte         = 24
+  @inline def MATH_SYMBOL: scala.Byte               = 25
+  @inline def CURRENCY_SYMBOL: scala.Byte           = 26
+  @inline def MODIFIER_SYMBOL: scala.Byte           = 27
+  @inline def OTHER_SYMBOL: scala.Byte              = 28
+  @inline def INITIAL_QUOTE_PUNCTUATION: scala.Byte = 29
+  @inline def FINAL_QUOTE_PUNCTUATION: scala.Byte   = 30
 
   final val MIN_RADIX = 2
   final val MAX_RADIX = 36
 
   final val MIN_HIGH_SURROGATE = '\uD800'
   final val MAX_HIGH_SURROGATE = '\uDBFF'
-  final val MIN_LOW_SURROGATE = '\uDC00'
-  final val MAX_LOW_SURROGATE = '\uDFFF'
-  final val MIN_SURROGATE = MIN_HIGH_SURROGATE
-  final val MAX_SURROGATE = MAX_LOW_SURROGATE
+  final val MIN_LOW_SURROGATE  = '\uDC00'
+  final val MAX_LOW_SURROGATE  = '\uDFFF'
+  final val MIN_SURROGATE      = MIN_HIGH_SURROGATE
+  final val MAX_SURROGATE      = MAX_LOW_SURROGATE
 
-  final val MIN_CODE_POINT = 0
-  final val MAX_CODE_POINT = 0x10ffff
+  final val MIN_CODE_POINT               = 0
+  final val MAX_CODE_POINT               = 0x10ffff
   final val MIN_SUPPLEMENTARY_CODE_POINT = 0x10000
+
+  @inline def charCount(codePoint: Int): Int =
+    if (codePoint >= MIN_SUPPLEMENTARY_CODE_POINT) 2 else 1
+
+  def codePointAt(seq: Array[scala.Char],
+                  _index: scala.Int,
+                  limit: scala.Int): scala.Int = {
+    var index = _index
+    if (index < 0 || index >= limit || limit < 0 || limit > seq.length) {
+      throw new ArrayIndexOutOfBoundsException()
+    }
+
+    val high = seq(index)
+    index += 1
+    if (index >= limit) {
+      high
+    } else {
+      val low = seq(index)
+      if (isSurrogatePair(high, low))
+        toCodePoint(high, low)
+      else
+        high
+    }
+  }
+
+  def codePointBefore(seq: Array[scala.Char], _index: scala.Int): scala.Int = {
+    var index = _index
+    val len   = seq.length
+    if (index < 1 || index > len) {
+      throw new ArrayIndexOutOfBoundsException(index)
+    }
+
+    index -= 1
+    val low = seq.charAt(index)
+    index -= 1
+    if (index < 0) {
+      low
+    } else {
+      val high = seq(index)
+      if (isSurrogatePair(high, low))
+        toCodePoint(high, low)
+      else
+        low
+    }
+  }
+
+  def codePointCount(seq: Array[scala.Char],
+                     offset: scala.Int,
+                     count: scala.Int): scala.Int = {
+    val len      = seq.length
+    val endIndex = offset + count
+    if (offset < 0 || count < 0 || endIndex > len) {
+      throw new IndexOutOfBoundsException()
+    }
+
+    var result = 0
+    var i      = offset
+    while (i <= endIndex) {
+      var c = seq(i)
+      if (isHighSurrogate(c)) {
+        i += 1
+        if (i < endIndex) {
+          c = seq(i)
+          if (!isLowSurrogate(c)) {
+            result += 1
+          }
+        }
+      }
+
+      result += 1
+      i += 1
+    }
+
+    result
+  }
+
+  def offsetByCodePoints(seq: Array[scala.Char],
+                         start: scala.Int,
+                         count: scala.Int,
+                         index: scala.Int,
+                         codePointOffset: scala.Int): scala.Int = {
+    val end = start + count
+    if (start < 0 || count < 0 || end > seq.length || index < start || index > end) {
+      throw new IndexOutOfBoundsException()
+    }
+
+    if (codePointOffset == 0) {
+      index
+    } else if (codePointOffset > 0) {
+      var codePoints = codePointOffset
+      var i          = index
+      while (codePoints > 0) {
+        codePoints -= 1
+        if (i >= end) {
+          throw new IndexOutOfBoundsException()
+        }
+        if (isHighSurrogate(seq(i))) {
+          val next = i + 1
+          if (next <= end && isLowSurrogate(seq(next))) {
+            i += 1
+          }
+        }
+        i += 1
+      }
+      i
+    } else {
+      var codePoints = -codePointOffset
+      var i          = index
+      while (codePoints > 0) {
+        codePoints -= 1
+        i -= 1
+        if (i < start) {
+          throw new IndexOutOfBoundsException()
+        }
+        if (isLowSurrogate(seq(i))) {
+          val prev = i - 1
+          if (prev >= start && isHighSurrogate(seq(prev))) {
+            i -= 1
+          }
+        }
+      }
+      i
+    }
+  }
+
+  def hashCode(value: scala.Char): scala.Int = value
+
+  def valueOf(charValue: scala.Char): Character = new Character(charValue)
 
   def getType(ch: scala.Char): Int = getType(ch.toInt)
 
@@ -242,10 +391,10 @@ object Character {
     else if (c >= 'a' && c <= 'z' && c - 'a' < radix - 10)
       c - 'a' + 10
     else if (c >= '\uFF21' && c <= '\uFF3A' &&
-      c - '\uFF21' < radix - 10)
+             c - '\uFF21' < radix - 10)
       c - '\uFF21' + 10
     else if (c >= '\uFF41' && c <= '\uFF5A' &&
-      c - '\uFF41' < radix - 10)
+             c - '\uFF41' < radix - 10)
       c - '\uFF21' + 10
     else -1
   }
@@ -256,7 +405,7 @@ object Character {
       0
     } else {
       val overBaseTen = digit - 10
-      val result = if (overBaseTen < 0) '0' + digit else 'a' + overBaseTen
+      val result      = if (overBaseTen < 0) '0' + digit else 'a' + overBaseTen
       result.toChar
     }
   }
@@ -310,7 +459,8 @@ object Character {
     (c & HighSurrogateMask) == HighSurrogateID
   @inline def isLowSurrogate(c: scala.Char): scala.Boolean =
     (c & LowSurrogateMask) == LowSurrogateID
-  @inline def isSurrogatePair(high: scala.Char, low: scala.Char): scala.Boolean =
+  @inline
+  def isSurrogatePair(high: scala.Char, low: scala.Char): scala.Boolean =
     isHighSurrogate(high) && isLowSurrogate(low)
 
   @inline def toCodePoint(high: scala.Char, low: scala.Char): Int =
@@ -403,7 +553,8 @@ object Character {
   @inline private[this] def isLetterOrDigitImpl(tpe: Int): scala.Boolean =
     isDigitImpl(tpe) || isLetterImpl(tpe)
 
-  def isJavaLetter(ch: scala.Char): scala.Boolean = isJavaLetterImpl(getType(ch))
+  def isJavaLetter(ch: scala.Char): scala.Boolean =
+    isJavaLetterImpl(getType(ch))
 
   @inline private[this] def isJavaLetterImpl(tpe: Int): scala.Boolean = {
     isLetterImpl(tpe) || tpe == LETTER_NUMBER || tpe == CURRENCY_SYMBOL ||
@@ -413,7 +564,8 @@ object Character {
   def isJavaLetterOrDigit(ch: scala.Char): scala.Boolean =
     isJavaLetterOrDigitImpl(ch, getType(ch))
 
-  @inline private[this] def isJavaLetterOrDigitImpl(codePoint: Int,
+  @inline private[this] def isJavaLetterOrDigitImpl(
+      codePoint: Int,
       tpe: Int): scala.Boolean = {
     isJavaLetterImpl(tpe) || tpe == COMBINING_SPACING_MARK ||
     tpe == NON_SPACING_MARK || isIdentifierIgnorableImpl(codePoint, tpe)
@@ -453,7 +605,8 @@ object Character {
   def isJavaIdentifierPart(codePoint: Int): scala.Boolean =
     isJavaIdentifierPartImpl(codePoint, getType(codePoint))
 
-  @inline private[this] def isJavaIdentifierPartImpl(codePoint: Int,
+  @inline private[this] def isJavaIdentifierPartImpl(
+      codePoint: Int,
       tpe: Int): scala.Boolean = {
     isLetterImpl(tpe) || tpe == CURRENCY_SYMBOL ||
     tpe == CONNECTOR_PUNCTUATION || tpe == DECIMAL_DIGIT_NUMBER ||
@@ -477,8 +630,7 @@ object Character {
   def isUnicodeIdentifierPart(codePoint: Int): scala.Boolean =
     isUnicodeIdentifierPartImpl(codePoint, getType(codePoint))
 
-  def isUnicodeIdentifierPartImpl(codePoint: Int,
-      tpe: Int): scala.Boolean = {
+  def isUnicodeIdentifierPartImpl(codePoint: Int, tpe: Int): scala.Boolean = {
     tpe == CONNECTOR_PUNCTUATION || tpe == DECIMAL_DIGIT_NUMBER ||
     tpe == COMBINING_SPACING_MARK || tpe == NON_SPACING_MARK ||
     isUnicodeIdentifierStartImpl(tpe) ||
@@ -491,7 +643,8 @@ object Character {
   def isIdentifierIgnorable(codePoint: Int): scala.Boolean =
     isIdentifierIgnorableImpl(codePoint, getType(codePoint))
 
-  @inline private[this] def isIdentifierIgnorableImpl(codePoint: Int,
+  @inline private[this] def isIdentifierIgnorableImpl(
+      codePoint: Int,
       tpe: Int): scala.Boolean = {
     ('\u0000' <= codePoint && codePoint <= '\u0008') ||
     ('\u000E' <= codePoint && codePoint <= '\u001B') ||
@@ -507,37 +660,87 @@ object Character {
     (Math.abs(idx) & 1) != 0
   }
 
-  //def getDirectionality(c: scala.Char): scala.Byte
-
   /* Conversions */
-  def toUpperCase(c: scala.Char): scala.Char = c.toString.toUpperCase()(0)
-  def toLowerCase(c: scala.Char): scala.Char = c.toString.toLowerCase()(0)
-  //def toTitleCase(c: scala.Char): scala.Char
-  //def getNumericValue(c: scala.Char): Int
+  def toUpperCase(c: scala.Char): scala.Char = {
+    toUpperCase(c.toInt).toChar
+  }
 
-  /* Misc */
-  //def reverseBytes(ch: scala.Char): scala.Char
+  def toUpperCase(codePoint: Int): Int = {
+    import CaseFolding._
+    toCase(codePoint,
+           a,
+           z,
+           toUpper,
+           lowerBeta,
+           lowerRanges,
+           lowerDeltas,
+           lowerSteps)
+  }
+
+  def toLowerCase(c: scala.Char): scala.Char = {
+    toLowerCase(c.toInt).toChar
+  }
+
+  def toLowerCase(codePoint: Int): Int = {
+    import CaseFolding._
+    toCase(codePoint,
+           A,
+           Z,
+           toLower,
+           upperMu,
+           upperRanges,
+           upperDeltas,
+           upperSteps)
+  }
 
   def toChars(codePoint: Int): Array[Char] = {
     if (!isValidCodePoint(codePoint))
       throw new IllegalArgumentException()
 
     if (isSupplementaryCodePoint(codePoint)) {
-      val cpPrime = codePoint - 0x10000
-      val high = 0xD800 | ((cpPrime >> 10) & 0x3FF)
-      val low = 0xDC00 | (cpPrime & 0x3FF)
-      Array(high.toChar, low.toChar)
+      val dst = new Array[Char](2)
+      toSurrogate(codePoint, dst, 0)
+      dst
     } else {
       Array(codePoint.toChar)
     }
   }
 
-  @inline def toString(c: scala.Char): String = ???
+  def toChars(codePoint: Int, dst: Array[Char], dstIndex: Int): Int = {
+    if (!isValidCodePoint(codePoint))
+      throw new IllegalArgumentException()
+
+    if (isSupplementaryCodePoint(codePoint)) {
+      toSurrogate(codePoint, dst, dstIndex)
+      2
+    } else {
+      dst(dstIndex) = codePoint.toChar
+      1
+    }
+  }
+
+  @inline private[this] def toSurrogate(codePoint: Int,
+                                        dst: Array[Char],
+                                        dstIndex: Int): Unit = {
+    val cpPrime = codePoint - 0x10000
+    val high    = 0xD800 | ((cpPrime >> 10) & 0x3FF)
+    val low     = 0xDC00 | (cpPrime & 0x3FF)
+    dst(dstIndex) = high.toChar
+    dst(dstIndex + 1) = low.toChar
+  }
+
+  @inline def toString(c: scala.Char): String =
+    String.valueOf(c)
 
   @inline def compare(x: scala.Char, y: scala.Char): Int =
     x - y
 
   // Based on Unicode 7.0.0
+
+  // Scalafmt doesn't like long integer arrays, so we turn
+  // it off for the arrays below.
+  //
+  // format: off
 
   // Types of characters from 0 to 255
   private[this] lazy val charTypesFirst256 = Array[scala.Byte](15, 15, 15, 15,
@@ -576,6 +779,7 @@ object Character {
   //    "charTypeIndices: val deltas = Array[Int](", ", ", ")"))
   //  println(charTypes.mkString("val charTypes = Array[scala.Byte](", ", ", ")"))
   //
+  // format: off
   private[this] lazy val charTypeIndices = {
     val deltas = Array[Int](257, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -906,17 +1110,290 @@ object Character {
     uncompressDeltas(deltas)
   }
 
+  // format: on
+
   private[this] def uncompressDeltas(deltas: Array[Int]): Array[Int] = {
     for (i <- 1 until deltas.length)
       deltas(i) += deltas(i - 1)
     deltas
   }
 
-  def codePointAt(chars: Array[scala.Char], index: scala.Int,
-      limit: scala.Int): scala.Int = ???
-  def codePointBefore(chars: Array[scala.Char], index: scala.Int): scala.Int = ???
-  def codePointCount(chars: Array[scala.Char], offset: scala.Int,
-      count: scala.Int): scala.Int = ???
-  def offsetByCodePoints(chars: Array[scala.Char], start: scala.Int,
-      count: scala.Int, index: scala.Int, codePointOffset: scala.Int): scala.Int = ???
+  // Create tables to support toUpperCase and toLowerCase transformations
+  // using the Unicode 7.0 database. This implementation uses the
+  // CaseFolding.txt file referenced below.
+  // Ranges: the codePoints with lower and upper bound pairs or
+  //         individual codePoints.
+  // Deltas: the difference between the upper and lower case codePoints
+  //         for ranges and individual codePoints.
+  // Steps:  values of O indicate the lower bound or individual codePoint.
+  //         Steps of 1 or 2 indicate the spacing of the upper or lower case
+  //         codePoints with the same index as the upper bound of a range.
+  //
+  // http://www.unicode.org/Public/7.0.0/ucd/CaseFolding.txt
+  //
+  //  import scala.io.Source
+  //  import java.io.InputStream
+  //  def toInt(hex: String): Int = Integer.parseInt(hex, 16)
+  //  val filename = "/CaseFolding.txt"
+  //  val stream : InputStream = getClass.getResourceAsStream(filename)
+  //  val lines = scala.io.Source.fromInputStream(stream).getLines
+  //  val records = lines.filterNot(line => line.startsWith("#") || line.isEmpty())
+  //  val arrays = records.map { x => x.split(";")  }
+  //  val tuples = arrays.map { c => (c(0), c(1).trim(), c(2).trim, c(3).trim) }
+  //  // filter for 'simple case folding C + S'
+  //  val fTuples = tuples.filter(t => (t._2 == "C" || t._2 == "S") ).toList
+  //  val upperLower = fTuples.map(t => (toInt(t._1), toInt(t._3)))
+  //  val pairs = upperLower.map { case (u, l) => (u, l, u - l) }
+  //
+  //  def printIndented(list: List[(Int,Int,Int,Int)]) = {
+  //    list.foreach(f => if (f._4 == 0) print("\n" + f) else print(f)); println
+  //  }
+  //
+  //  def addDiff(arr: List[(Int, Int, Int)]) = {
+  //    arr.foldLeft[List[(Int, Int, Int, Int)]](Nil) {
+  //      case (x :: xs, elem) if (x._3 == elem._3) => {
+  //        val diff = elem._1 - x._1
+  //        // only ranges with diff or 1 or 2 matter
+  //        // some ranges with 2 are only 2 long
+  //        if (diff <= 2) (elem._1, elem._2, elem._3, diff) :: x :: xs
+  //        else (elem._1, elem._2, elem._3, 0) :: x :: xs
+  //      }
+  //      case (list, elem) => (elem._1, elem._2, elem._3, 0) :: list
+  //    }.reverse
+  //  }
+  //
+  //  def adjustStart(arr: List[(Int, Int, Int, Int)]) = {
+  //    arr.tail.foldLeft[List[(Int, Int, Int, Int)]](List(arr.head)) {
+  //      case (x :: xs, elem) if (x._4 == 0 || x._4 == elem._4) => elem :: x :: xs
+  //      case (list, elem) => (elem._1, elem._2, elem._3, 0) :: list
+  //    }.reverse
+  //  }
+  //
+  //  def keepLast(arr: List[(Int, Int, Int, Int)]): List[(Int, Int, Int, Int)] = {
+  //    import scala.annotation.tailrec
+  //    val h = arr.head
+  //    val tail = arr.tail
+  //    @tailrec
+  //    def process(list: List[(Int, Int, Int, Int)], acc: List[(Int, Int, Int, Int)],
+  //        prev: (Int, Int, Int, Int)): List[(Int, Int, Int, Int)] = {
+  //      list match {
+  //        case Nil => acc
+  //        case x :: xs =>
+  //          if (x._4 == 0 && x._4 != prev._4) process(xs, x :: prev :: acc, x)
+  //          else if (x._4 == 0 || xs == Nil) process(xs, x :: acc, x) // Nil to get last element
+  //          else process(xs, acc, x)
+  //      }
+  //    }
+  //    process(tail, List(h), h).reverse
+  //  }
+  //
+  //  def addDiffLower(arr: List[(Int, Int, Int)]) = {
+  //    arr.foldLeft[List[(Int, Int, Int, Int)]](Nil) {
+  //      case (x :: xs, elem) if (x._3 == elem._3) => {
+  //        val diff = elem._2 - x._2
+  //        // only ranges with diff or 1 or 2 matter
+  //        // some ranges with 2 are only 2 long
+  //        if (diff <= 2) (elem._1, elem._2, elem._3, diff) :: x :: xs
+  //        else (elem._1, elem._2, elem._3, 0) :: x :: xs
+  //      }
+  //      case (list, elem) => (elem._1, elem._2, elem._3, 0) :: list
+  //    }.reverse
+  //  }
+  //
+  //  def lowerDedup(arr: List[(Int, Int, Int)]) = {
+  //    arr.tail.foldLeft[List[(Int, Int, Int)]](List(arr.head)) {
+  //      case (x :: xs, elem) if (x._2 == elem._2) => x :: xs
+  //      case (list, elem) => elem :: list
+  //    }.reverse
+  //  }
+  //
+  //  // process uppers
+  //  val u2 = addDiff(pairs)
+  //  val u3 = adjustStart(u2)
+  //  //printIndented(u3)
+  //  val u4 = keepLast(u3)
+  //
+  //  // Lower case manipulation
+  //  val lPairs = pairs.sortBy{ case ((u,l,d))  => ((l,u)) }
+  //  val l2 = lowerDedup(lPairs)
+  //  // 1104 total, 1083 in lowers with dups removed
+  //  // 244 in uppers because of upper -> lower can have more than one mapping
+  //  // 230 in lowers
+  //  // upper to lower is loss less but back is not reversible
+  //  val l3 = addDiffLower(l2)
+  //  val l4 = adjustStart(l3)
+  //  //printIndented(l4)
+  //  val l5 = keepLast(l4)
+  //
+  //  val uk = u4.unzip { case(_, _, c, d) => (c, d)}
+  //  val ul = u4.unzip { case(a, b, _, _) => (a, b)}
+  //  val lk = l5.unzip { case(_, _, c, d) => (c, d)}
+  //  val ll = l5.unzip { case(a, b, _, _) => (a, b)}
+  //  println(uk._1.mkString("private[this] lazy val upperDeltas = Array[scala.Int](", ", ", ")"))
+  //  println(uk._2.mkString("private[this] lazy val upperSteps = Array[scala.Byte](", ", ", ")"))
+  //  println(ul._1.mkString("private[this] lazy val upperRanges = Array[scala.Int](", ", ", ")"))
+  //  println(lk._1.mkString("private[this] lazy val lowerDeltas = Array[scala.Int](", ", ", ")"))
+  //  println(lk._2.mkString("private[this] lazy val lowerSteps = Array[scala.Byte](", ", ", ")"))
+  //  println(ll._2.mkString("private[this] lazy val lowerRanges = Array[scala.Int](", ", ", ")"))
+
+  private[this] lazy val upperDeltas = Array[scala.Int](32, 32, 775, 32, 32,
+    32, 32, 1, 1, 1, 1, 1, 1, 1, 1, -121, 1, 1, -268, 210, 1, 1, 206, 1, 205,
+    205, 1, 79, 202, 203, 1, 205, 207, 211, 209, 1, 211, 213, 214, 1, 1, 218,
+    1, 218, 1, 218, 1, 217, 217, 1, 1, 219, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 2,
+    1, 1, -97, -56, 1, 1, -130, 1, 1, 10795, 1, -163, 10792, 1, -195, 69, 71,
+    1, 1, 116, 1, 1, 1, 116, 38, 37, 37, 64, 63, 63, 32, 32, 32, 32, 1, 8, -30,
+    -25, -15, -22, 1, 1, -54, -48, -60, -64, 1, -7, 1, -130, -130, 80, 80, 32,
+    32, 1, 1, 1, 1, 15, 1, 1, 1, 1, 48, 48, 7264, 7264, 7264, 7264, 1, 1, -58,
+    -7615, 1, 1, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8,
+    -8, -8, -8, -8, -8, -8, -8, -74, -74, -9, -7173, -86, -86, -9, -8, -8,
+    -100, -100, -8, -8, -112, -112, -7, -128, -128, -126, -126, -9, -7517,
+    -8383, -8262, 28, 16, 16, 1, 26, 26, 48, 48, 1, -10743, -3814, -10727, 1,
+    1, -10780, -10749, -10783, -10782, 1, 1, -10815, -10815, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, -35332, 1, 1, 1, -42280, 1, 1, 1, 1, -42308,
+    -42319, -42315, -42305, -42258, -42282, 32, 32, 40, 40, 32, 32)
+
+  private[this] lazy val upperSteps = Array[scala.Byte](0, 1, 0, 0, 1, 0, 1, 0,
+    2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+    0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 2, 0, 2, 0, 0, 2, 0, 2, 0, 1, 0, 1, 0,
+    0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1,
+    0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1,
+    0, 2, 0, 2, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1)
+
+  private[this] lazy val upperRanges = Array[scala.Int](65, 90, 181, 192, 214,
+    216, 222, 256, 302, 306, 310, 313, 327, 330, 374, 376, 377, 381, 383, 385,
+    386, 388, 390, 391, 393, 394, 395, 398, 399, 400, 401, 403, 404, 406, 407,
+    408, 412, 413, 415, 416, 420, 422, 423, 425, 428, 430, 431, 433, 434, 435,
+    437, 439, 440, 444, 452, 453, 455, 456, 458, 459, 475, 478, 494, 497, 498,
+    500, 502, 503, 504, 542, 544, 546, 562, 570, 571, 573, 574, 577, 579, 580,
+    581, 582, 590, 837, 880, 882, 886, 895, 902, 904, 906, 908, 910, 911, 913,
+    929, 931, 939, 962, 975, 976, 977, 981, 982, 984, 1006, 1008, 1009, 1012,
+    1013, 1015, 1017, 1018, 1021, 1023, 1024, 1039, 1040, 1071, 1120, 1152,
+    1162, 1214, 1216, 1217, 1229, 1232, 1326, 1329, 1366, 4256, 4293, 4295,
+    4301, 7680, 7828, 7835, 7838, 7840, 7934, 7944, 7951, 7960, 7965, 7976,
+    7983, 7992, 7999, 8008, 8013, 8025, 8031, 8040, 8047, 8072, 8079, 8088,
+    8095, 8104, 8111, 8120, 8121, 8122, 8123, 8124, 8126, 8136, 8139, 8140,
+    8152, 8153, 8154, 8155, 8168, 8169, 8170, 8171, 8172, 8184, 8185, 8186,
+    8187, 8188, 8486, 8490, 8491, 8498, 8544, 8559, 8579, 9398, 9423, 11264,
+    11310, 11360, 11362, 11363, 11364, 11367, 11371, 11373, 11374, 11375,
+    11376, 11378, 11381, 11390, 11391, 11392, 11490, 11499, 11501, 11506,
+    42560, 42604, 42624, 42650, 42786, 42798, 42802, 42862, 42873, 42875,
+    42877, 42878, 42886, 42891, 42893, 42896, 42898, 42902, 42920, 42922,
+    42923, 42924, 42925, 42928, 42929, 65313, 65338, 66560, 66599, 71840,
+    71871)
+
+  private[this] lazy val lowerDeltas = Array[scala.Int](32, 32, -7615, 32, 32,
+    32, 32, -121, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -195, 1, 1, 1, 1, 1, -97, 1,
+    -163, -130, 1, 1, 1, 1, 1, 1, 1, 1, 1, -56, 2, 2, 2, 1, 1, 79, 1, 1, 2, 1,
+    1, 1, 1, 1, 1, -10815, -10815, 1, 1, 1, -10783, -10780, -10782, 210, 206,
+    205, 205, 202, 203, -42319, 205, -42315, 207, -42280, -42308, 209, 211,
+    -10743, -42305, 211, -10749, 213, 214, -10727, 218, 218, -42282, 218, 69,
+    217, 217, 71, 219, -42258, 1, 1, 1, -130, -130, 38, 37, 37, 32, 32, 116,
+    32, 32, 775, 32, 32, 32, 32, 64, 63, 63, 8, 1, 1, -7, 116, 1, 1, 32, 32,
+    80, 80, 1, 1, 1, 1, 1, 1, 15, 1, 1, 48, 48, -35332, -3814, 1, 1, 1, 1, -8,
+    -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -74, -74, -86, -86,
+    -100, -100, -128, -128, -112, -112, -126, -126, -8, -8, -8, -8, -8, -8, -8,
+    -8, -9, -9, -8, -8, -8, -8, -7, -9, 28, 16, 16, 1, 26, 26, 48, 48, 1,
+    10795, 10792, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7264, 7264, 7264, 7264, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 32, 32, 40, 40, 32, 32)
+
+  private[this] lazy val lowerSteps = Array[scala.Byte](0, 1, 0, 0, 1, 0, 1, 0,
+    0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0,
+    0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 1, 0, 0, 2,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1,
+    0, 1, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 1, 0, 2, 0, 2, 0, 2, 0, 0, 2,
+    0, 1, 0, 0, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0,
+    1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0,
+    0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 1, 0, 0, 0,
+    2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1)
+
+  private[this] lazy val lowerRanges = Array[scala.Int](97, 122, 223, 224, 246,
+    248, 254, 255, 257, 303, 307, 311, 314, 328, 331, 375, 378, 382, 384, 387,
+    389, 392, 396, 402, 405, 409, 410, 414, 417, 421, 424, 429, 432, 436, 438,
+    441, 445, 447, 454, 457, 460, 462, 476, 477, 479, 495, 499, 501, 505, 543,
+    547, 563, 572, 575, 576, 578, 583, 591, 592, 593, 594, 595, 596, 598, 599,
+    601, 603, 604, 608, 609, 611, 613, 614, 616, 617, 619, 620, 623, 625, 626,
+    629, 637, 640, 643, 647, 648, 649, 650, 651, 652, 658, 670, 881, 883, 887,
+    891, 893, 940, 941, 943, 945, 952, 953, 954, 955, 956, 957, 961, 963, 971,
+    972, 973, 974, 983, 985, 1007, 1010, 1011, 1016, 1019, 1072, 1103, 1104,
+    1119, 1121, 1153, 1163, 1215, 1218, 1230, 1231, 1233, 1327, 1377, 1414,
+    7545, 7549, 7681, 7829, 7841, 7935, 7936, 7943, 7952, 7957, 7968, 7975,
+    7984, 7991, 8000, 8005, 8017, 8023, 8032, 8039, 8048, 8049, 8050, 8053,
+    8054, 8055, 8056, 8057, 8058, 8059, 8060, 8061, 8064, 8071, 8080, 8087,
+    8096, 8103, 8112, 8113, 8115, 8131, 8144, 8145, 8160, 8161, 8165, 8179,
+    8526, 8560, 8575, 8580, 9424, 9449, 11312, 11358, 11361, 11365, 11366,
+    11368, 11372, 11379, 11382, 11393, 11491, 11500, 11502, 11507, 11520,
+    11557, 11559, 11565, 42561, 42605, 42625, 42651, 42787, 42799, 42803,
+    42863, 42874, 42876, 42879, 42887, 42892, 42897, 42899, 42903, 42921,
+    65345, 65370, 66600, 66639, 71872, 71903)
+
+  private[this] object CaseFolding {
+    lazy val a     = lowerRanges(0)
+    lazy val z     = lowerRanges(1)
+    lazy val A     = upperRanges(0)
+    lazy val Z     = upperRanges(1)
+    lazy val delta = upperDeltas(0)
+    // other low char optimization whitespace, punctuation, etc.
+    lazy val upperMu                        = upperRanges(2)
+    lazy val lowerBeta                      = lowerRanges(2)
+    def insertionPoint(idx: Int)            = (-(idx) - 1)
+    def toUpper(codePoint: Int, delta: Int) = codePoint - delta
+    def toLower(codePoint: Int, delta: Int) = codePoint + delta
+  }
+
+  private[this] def toCase(codePoint: Int,
+                           asciiLow: Int,
+                           asciiHigh: Int,
+                           convert: (Int, Int) => Int,
+                           lowFilter: Int,
+                           ranges: Array[scala.Int],
+                           deltas: Array[scala.Int],
+                           steps: Array[scala.Byte]): Int = {
+    import CaseFolding._
+    if (asciiLow <= codePoint && codePoint <= asciiHigh)
+      convert(codePoint, delta) // ascii
+    else if (codePoint < lowFilter) codePoint // whitespace, punctuation, etc.
+    else {
+      val idx = Arrays.binarySearch(ranges, codePoint)
+      if (idx >= 0) {
+        convert(codePoint, deltas(idx))
+      } else {
+        val ip = insertionPoint(idx)
+        // ip == 0 is below ranges but < lowFilter above covers that
+        if (ip == ranges.size) codePoint // above ranges
+        else {
+          val step = steps(ip)
+          if (step == 0) {
+            // no range involved
+            codePoint
+          } else {
+            val delta      = deltas(ip)
+            val upperBound = ranges(ip)
+            if (step == 1) {
+              convert(codePoint, delta)
+            } else {
+              // step == 2 so check both odd or even
+              if ((upperBound & 1) == (codePoint & 1)) {
+                convert(codePoint, delta)
+              } else {
+                codePoint
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // TODO:
+  // def getDirectionality(c: scala.Char): scala.Byte
+  // def toTitleCase(c: scala.Char): scala.Char
+  // def getNumericValue(c: scala.Char): Int
+  // def reverseBytes(ch: scala.Char): scala.Char
+  // ...
 }

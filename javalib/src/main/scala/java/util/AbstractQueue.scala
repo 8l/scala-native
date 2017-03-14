@@ -1,7 +1,8 @@
 package java.util
 
 abstract class AbstractQueue[E] protected ()
-    extends AbstractCollection[E] with Queue[E] {
+    extends AbstractCollection[E]
+    with Queue[E] {
 
   override def add(e: E): Boolean =
     if (offer(e)) true
@@ -20,10 +21,9 @@ abstract class AbstractQueue[E] protected ()
   }
 
   override def addAll(c: Collection[_ <: E]): Boolean = {
-    val iter = c.iterator
+    val iter    = c.iterator
     var changed = false
-    while (iter.hasNext())
-      changed = add(iter.next()) || changed
+    while (iter.hasNext()) changed = add(iter.next()) || changed
     changed
   }
 }

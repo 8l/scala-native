@@ -1,9 +1,10 @@
 package scala.scalanative
 
-import scala.reflect.ClassTag
-import runtime.undefined
+import java.nio.charset.Charset
+import runtime.{undefined, GC}
 
 package object native {
+
   /** Int on 32-bit architectures and Long on 64-bit ones. */
   type Word = Long
 
@@ -62,17 +63,19 @@ package object native {
   type CBool = Boolean
 
   /** The C/C++ 'size_t' type. */
-  // TODO: this should really be UWord, but uints are quite crippled atm
   type CSize = Word
 
   /** C-style string with trailing 0. */
   type CString = Ptr[CChar]
 
   /** The C 'sizeof' operator. */
-  def sizeof[T](implicit ct: ClassTag[T]): CSize = undefined
+  def sizeof[T](implicit tag: Tag[T]): CSize = undefined
 
-  /** Stack allocate value. */
-  def stackalloc[T](implicit ct: ClassTag[T]): Ptr[T] = undefined
+  /** Stack allocate a value of given type. */
+  def stackalloc[T](implicit tag: Tag[T]): Ptr[T] = undefined
+
+  /** Stack allocate n values of given type. */
+  def stackalloc[T](n: Int)(implicit tag: Tag[T]): Ptr[T] = undefined
 
   /** Used as right hand side of external method and field declarations. */
   def extern: Nothing = undefined
@@ -83,7 +86,72 @@ package object native {
   }
 
   /** C-style unchecked cast. */
-  implicit class CCast(val any: Any) {
-    def cast[T](implicit ct: ClassTag[T]): T = undefined
+  implicit class CCast[From](val from: From) {
+    def cast[To](implicit fromtag: Tag[From], totag: Tag[To]): To =
+      undefined
+  }
+
+  /** Scala Native extensions to the standard Byte. */
+  implicit class NativeRichByte(val value: Byte) extends AnyVal {
+    @inline def toUByte: UByte   = new UByte(value)
+    @inline def toUShort: UShort = toUByte.toUShort
+    @inline def toUInt: UInt     = toUByte.toUInt
+    @inline def toULong: ULong   = toUByte.toULong
+  }
+
+  /** Scala Native extensions to the standard Short. */
+  implicit class NativeRichShort(val value: Short) extends AnyVal {
+    @inline def toUByte: UByte   = toUShort.toUByte
+    @inline def toUShort: UShort = new UShort(value)
+    @inline def toUInt: UInt     = toUShort.toUInt
+    @inline def toULong: ULong   = toUShort.toULong
+  }
+
+  /** Scala Native extensions to the standard Int. */
+  implicit class NativeRichInt(val value: Int) extends AnyVal {
+    @inline def toUByte: UByte   = toUInt.toUByte
+    @inline def toUShort: UShort = toUInt.toUShort
+    @inline def toUInt: UInt     = new UInt(value)
+    @inline def toULong: ULong   = toUInt.toULong
+  }
+
+  /** Scala Native extensions to the standard Long. */
+  implicit class NativeRichLong(val value: Long) extends AnyVal {
+    @inline def toUByte: UByte   = toULong.toUByte
+    @inline def toUShort: UShort = toULong.toUShort
+    @inline def toUInt: UInt     = toULong.toUInt
+    @inline def toULong: ULong   = new ULong(value)
+  }
+
+  /** Convert a CString to a String using given charset. */
+  def fromCString(cstr: CString,
+                  charset: Charset = Charset.defaultCharset()): String = {
+    val len   = string.strlen(cstr).toInt
+    val bytes = new Array[Byte](len)
+
+    var c = 0
+    while (c < len) {
+      bytes(c) = !(cstr + c)
+      c += 1
+    }
+
+    new String(bytes, charset)
+  }
+
+  /** Convert a java.lang.String to a CString using given charset. */
+  def toCString(str: String,
+                charset: Charset = Charset.defaultCharset()): CString = {
+    val bytes = str.getBytes(charset)
+    val cstr  = GC.malloc_atomic(bytes.length + 1).cast[Ptr[Byte]]
+
+    var c = 0
+    while (c < bytes.length) {
+      !(cstr + c) = bytes(c)
+      c += 1
+    }
+
+    !(cstr + c) = 0.toByte
+
+    cstr
   }
 }

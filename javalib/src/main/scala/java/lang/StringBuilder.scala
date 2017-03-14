@@ -2,10 +2,11 @@ package java.lang
 
 import AbstractStringBuilder.INITIAL_CAPACITY
 
-final class StringBuilder extends AbstractStringBuilder
-                             with Appendable
-                             with CharSequence
-                             with Serializable {
+final class StringBuilder
+    extends AbstractStringBuilder
+    with Appendable
+    with CharSequence
+    with Serializable {
   def this(capacity: Int) = {
     this()
     value = new Array[scala.Char](capacity)
@@ -28,12 +29,35 @@ final class StringBuilder extends AbstractStringBuilder
     string.getChars(0, count, value, 0)
   }
 
-  def append(b: scala.Boolean): StringBuilder = { append0(if (b) "true" else "false"); this }
-  def append(c: scala.Char): StringBuilder = { append0(c); this }
-  def append(i: scala.Int): StringBuilder = { append0(Integer.toString(i)); this }
-  def append(l: scala.Long): StringBuilder = { append0(Long.toString(l)); this }
-  def append(f: scala.Float): StringBuilder = { append0(Float.toString(f)); this }
-  def append(d: scala.Double): StringBuilder = { append0(Double.toString(d)); this }
+  def append(b: scala.Boolean): StringBuilder = {
+    append0(if (b) "true" else "false")
+    this
+  }
+
+  def append(c: scala.Char): StringBuilder = {
+    append0(c)
+    this
+  }
+
+  def append(i: scala.Int): StringBuilder = {
+    append0(Integer.toString(i))
+    this
+  }
+
+  def append(l: scala.Long): StringBuilder = {
+    append0(Long.toString(l))
+    this
+  }
+
+  def append(f: scala.Float): StringBuilder = {
+    append0(Float.toString(f))
+    this
+  }
+
+  def append(d: scala.Double): StringBuilder = {
+    append0(Double.toString(d))
+    this
+  }
 
   def append(obj: Object): StringBuilder = {
     if (obj == null) appendNull()
@@ -41,14 +65,31 @@ final class StringBuilder extends AbstractStringBuilder
     this
   }
 
-  def append(str: String): StringBuilder = { append0(str); this }
+  def append(str: String): StringBuilder = {
+    append0(str)
+    this
+  }
 
-  // TODO:
-  // def append(sb: StringBuffer): StringBuilder
+  def append(sb: StringBuffer): StringBuilder = {
+    if (sb == null) {
+      appendNull()
+    } else {
+      append0(sb.getValue(), 0, sb.length())
+    }
+    this
+  }
 
-  def append(str: Array[scala.Char]): StringBuilder = { append0(str); this }
-  def append(str: Array[scala.Char], offset: scala.Int,
-      len: scala.Int): StringBuilder = { append0(str, offset, len); this }
+  def append(str: Array[scala.Char]): StringBuilder = {
+    append0(str)
+    this
+  }
+
+  def append(str: Array[scala.Char],
+             offset: scala.Int,
+             len: scala.Int): StringBuilder = {
+    append0(str, offset, len)
+    this
+  }
 
   def append(seq: CharSequence): StringBuilder = {
     if (seq == null) appendNull()
@@ -56,7 +97,9 @@ final class StringBuilder extends AbstractStringBuilder
     this
   }
 
-  def append(seq: CharSequence, start: scala.Int, end: scala.Int): StringBuilder = {
+  def append(seq: CharSequence,
+             start: scala.Int,
+             end: scala.Int): StringBuilder = {
     append0(seq, start, end)
     this
   }
@@ -116,8 +159,10 @@ final class StringBuilder extends AbstractStringBuilder
     this
   }
 
-  def insert(offset: scala.Int, str: Array[scala.Char], strOffset: scala.Int,
-      strLen: scala.Int): StringBuilder = {
+  def insert(offset: scala.Int,
+             str: Array[scala.Char],
+             strOffset: scala.Int,
+             strLen: scala.Int): StringBuilder = {
     insert0(offset, str, strOffset, strLen)
     this
   }
@@ -127,9 +172,16 @@ final class StringBuilder extends AbstractStringBuilder
     this
   }
 
-  def insert(offset: scala.Int, seq: CharSequence, start: scala.Int,
-      end: scala.Int): StringBuilder =  {
-    insert0(offset, if (seq == null) "null" else seq.toString)
+  def insert(index: Int, chars: Array[scala.Char]): StringBuilder = {
+    insert0(index, chars)
+    this
+  }
+
+  def insert(offset: scala.Int,
+             seq: CharSequence,
+             start: scala.Int,
+             end: scala.Int): StringBuilder = {
+    insert0(offset, seq, start, end)
     this
   }
 
@@ -145,4 +197,3 @@ final class StringBuilder extends AbstractStringBuilder
 
   override def toString() = super.toString()
 }
-

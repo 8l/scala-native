@@ -3,9 +3,11 @@ package java.util
 import scala.collection.mutable
 import scala.collection.JavaConversions._
 
-class HashSet[E] extends AbstractSet[E] with Set[E]
-                                        with Cloneable
-                                        with Serializable { self =>
+class HashSet[E]
+    extends AbstractSet[E]
+    with Set[E]
+    with Cloneable
+    with Serializable { self =>
   def this(initialCapacity: Int, loadFactor: Float) =
     this()
 
@@ -17,8 +19,7 @@ class HashSet[E] extends AbstractSet[E] with Set[E]
     addAll(c)
   }
 
-  protected val inner: mutable.Set[Box[E]] =
-    new mutable.HashSet[Box[E]]()
+  protected val inner: mutable.Set[Box[E]] = new mutable.HashSet[Box[E]]()
 
   override def contains(o: Any): Boolean =
     inner.contains(Box(o.asInstanceOf[E]))
@@ -30,15 +31,14 @@ class HashSet[E] extends AbstractSet[E] with Set[E]
     c.iterator.forall(e => contains(e))
 
   override def removeAll(c: Collection[_]): Boolean = {
-    val iter = c.iterator
+    val iter    = c.iterator
     var changed = false
-    while (iter.hasNext)
-      changed = remove(iter.next()) || changed
+    while (iter.hasNext) changed = remove(iter.next()) || changed
     changed
   }
 
   override def retainAll(c: Collection[_]): Boolean = {
-    val iter = iterator
+    val iter    = iterator
     var changed = false
     while (iter.hasNext) {
       val value = iter.next
@@ -52,10 +52,9 @@ class HashSet[E] extends AbstractSet[E] with Set[E]
     inner.add(Box(e))
 
   override def addAll(c: Collection[_ <: E]): Boolean = {
-    val iter = c.iterator()
+    val iter    = c.iterator()
     var changed = false
-    while (iter.hasNext)
-      changed = add(iter.next()) || changed
+    while (iter.hasNext) changed = add(iter.next()) || changed
     changed
   }
 
@@ -86,5 +85,4 @@ class HashSet[E] extends AbstractSet[E] with Set[E]
       }
     }
   }
-
 }
